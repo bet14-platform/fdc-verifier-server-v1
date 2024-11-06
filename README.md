@@ -1,7 +1,7 @@
 
 # Bet14 Verifier Server
 
-This repository contains verifier server for match results data from The Odds API (orignally forked from Olympics Prediction Showcase).
+This repository contains verifier server for match results data from The Odds API (orignally forked from [Olympics Prediction Showcase](https://github.com/kalmiallc/oi-match-attestation-server) - thank you gentlemen.).
 
 Match results are verified against the data from The Odds API via paid API access.
 
