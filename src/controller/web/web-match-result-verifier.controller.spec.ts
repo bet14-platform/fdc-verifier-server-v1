@@ -3,16 +3,19 @@ import { WEBMatchResultVerifierService } from "../../service/web/web-match-resul
 import { WEBMatchResultVerifierController } from "./web-match-result-verifier.controller";
 import { readFileSync } from "fs";
 import { ExampleData } from "../../external-libs/ts/interfaces";
-import { MatchResult_RequestNoMic, MatchResult_Request, MatchResult_Response, MatchResult_RequestBody, MatchResult_ResponseBody } from "../../dto/MatchResult.dto";
+import {
+    MatchResult_RequestNoMic,
+    MatchResult_Request,
+    MatchResult_Response,
+    MatchResult_RequestBody,
+    MatchResult_ResponseBody,
+} from "../../dto/MatchResult.dto";
 import { AttestationDefinitionStore } from "../../external-libs/ts/AttestationDefinitionStore";
 import { encodeAttestationName } from "../../external-libs/ts/utils";
-
 
 describe("AppController", () => {
     let appController: WEBMatchResultVerifierController;
     let exampleData: ExampleData<MatchResult_RequestNoMic, MatchResult_Request, MatchResult_Response>;
-
-
 
     beforeEach(async () => {
         const app: TestingModule = await Test.createTestingModule({
@@ -50,37 +53,31 @@ describe("AppController", () => {
         });
 
         it("should 'verify' fail", async () => {
-
-            exampleData = generateSampleRequestResponse("1722364500", "0");
-             const actualRes = await appController.verify({
+            exampleData = generateSampleRequestResponse("1722364500", ["1", "2"]);
+            const actualRes = await appController.verify({
                 abiEncodedRequest: exampleData.encodedRequestZeroMic,
             });
             expect(actualRes.status).toEqual("INVALID");
         });
-
-
     });
 });
 
-
-
 // moved this here as we had some problems with not a function in MatchResult.ts
-export function generateSampleRequestResponse(timestamp = "1721833200", result= "1") {
+export function generateSampleRequestResponse(timestamp = "1721833200", results = ["1", "2"]) {
     const ATTESTATION_TYPE_NAME = "MatchResult";
     const MIC_SALT = "Flare";
-    
+
     const startOfDay = Math.floor(Number(timestamp) - (Number(timestamp) % 86400));
 
     const requestBody: MatchResult_RequestBody = {
         date: startOfDay.toString(),
         sport: "0",
-        gender: "0",
         teams: "Argentina,Morocco",
     };
 
     const responseBody: MatchResult_ResponseBody = {
         timestamp,
-        result
+        results,
     };
 
     const store = new AttestationDefinitionStore("type-definitions");
@@ -106,4 +103,3 @@ export function generateSampleRequestResponse(timestamp = "1721833200", result= 
     const encodedRequest = store.encodeRequest(request as any);
     return { requestNoMic, response, request, messageIntegrityCode, encodedRequestZeroMic, encodedRequest };
 }
-

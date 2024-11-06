@@ -1,21 +1,9 @@
 
-# Olympics Prediction Showcase - Contract result verifier server
+# Bet14 Verifier Server
 
-<p align="center">
-  <a href="https://flare.network/" target="blank"><img src="https://flare.network/wp-content/uploads/Artboard-1-1.svg" width="400" height="300" alt="Flare Logo" /></a>
-</p>
+This repository contains verifier server for match results data from The Odds API (orignally forked from Olympics Prediction Showcase).
 
-This repository contains verifier server for the Olympics match results data.
-The results are gained from the Official Olympics page <https://olympics.com/en/paris-2024/schedule>
-
-The complete showcase consists of four repositories:
-
-- [Prediction smart contract](https://github.com/kalmiallc/oi-prediction-smartcontract)
-- [Front-end application](https://github.com/kalmiallc/oi-prediction-webapp)
-- [Backend application](https://github.com/kalmiallc/oi-prediction-backend) which calls the verification provider API for verification
-- [Verification server](https://github.com/kalmiallc/oi-match-attestation-server)
-
-The complete guide can be found [here](https://github.com/kalmiallc/oi-flare-prediction-instructions)
+Match results are verified against the data from The Odds API via paid API access.
 
 ### Attestation Type Details
 
@@ -23,30 +11,22 @@ The project provides its own attestation type, the `Match result` attestation ty
 
 - date: match date (Unix timestamp without hour, rounded down to the day)
 - sport: match sport (enum Sports)
-- gender: the gender of the match participants (0 = Men, 1 = Women)
 - teams: match teams
 
 This attestation is specific to one event (Olympic games) but can be easily extended to other team sports.
 
 #### List of Sports
 
-- Basketball = 0
-- Basketball3x3 = 1
-- Badminton = 1
-- BeachVolley = 2
-- FieldHockey = 3
-- Football = 4
-- Handball = 5
-- TableTennis = 6
-- Tennis = 7
-- Volleyball = 8
-- WaterPolo = 9
+- Football (EPL) = 0
+- Baseball (MLB) = 1
 
 ### Verifier Server
 
 A verifier server is implemented for the defined `Match result` attestation type. The logic for the verifier server is written in TypeScript and is not included in this repository. The verifier server provides the logic for obtaining data from the WEB2 world.
 
-For this attestation type, the verifier server calls a Official Olympics WEB2 API, which returns the match results. If the data aligns with the expected results, it is considered valid. The verifier server is used by the attestation provider.
+For this attestation type, the verifier server calls an API provided by The Odds API, which returns the match results. If the data aligns with the expected results, it is considered valid. The verifier server is used by the attestation provider.
+
+By default, there are whitelisted IPs, which are allowed to access the API. This is useful to prevent abuse of the API. By default, the local IP addresses `127.0.0.1`, `::1`, `::ffff:127.0.0.1` are whitelisted. To add more IP addresses to the whitelist, set the `IP_WHITELIST` environment variable to a comma-separated list of IP addresses.
 
 ## Installation
 
@@ -87,16 +67,16 @@ $ yarn test:cov
 ```
 
 
-## Using the pre-built docker image
+## Using the pre-built docker image (NOT DEPLOYED YET)
 
 Pull the docker image:
 ```
-docker pull itkalmia/oi-match-attestation-server
+docker pull bet14/verifier-server 
 ```
 
 Start the docker image with your environment variables:
 ```
-docker run --name oi-match-server -e PORT=4500 -e API_KEYS=API_KEY_1,API_KEY_2,API_KEY_3 -p 4500:4500 -d itkalmia/oi-match-attestation-server
+docker run --name verifier-server -e PORT=4500 -e API_KEYS=API_KEY_1,API_KEY_2,API_KEY_3 -e THE_ODDS_API_KEY=API_KEY_4 -p 4500:4500 -d bet14/verifier-server
 ```
 
 ## License

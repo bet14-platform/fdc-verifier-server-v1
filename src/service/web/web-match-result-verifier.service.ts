@@ -14,7 +14,8 @@ import { AttestationDefinitionStore } from "../../external-libs/ts/AttestationDe
 import { AttestationResponseStatus } from "../../external-libs/ts/AttestationResponse";
 import { ExampleData } from "../../external-libs/ts/interfaces";
 import { MIC_SALT, ZERO_BYTES_32, encodeAttestationName, serializeBigInts } from "../../external-libs/ts/utils";
-import { getEventResults } from "../../lib/olympics-api";
+// import { getEventResults } from "../../lib/olympics-api";
+import { getEventResults } from "../../lib/the-odds-api";
 
 @Injectable()
 export class WEBMatchResultVerifierService {
@@ -94,8 +95,17 @@ export class WEBMatchResultVerifierService {
 
         try {
             responseBody = await prepareResponseBody(fixedRequest.requestBody);
-            if (responseBody.result !== "0" && ["1", "2", "3"].includes(responseBody.result)) {
-                status = AttestationResponseStatus.VALID;
+            if (
+                Array.isArray(responseBody.results) &&
+                responseBody.results.length === 2 &&
+                responseBody.results.every(
+                    (item: any) => typeof item === "string" && !isNaN(Number(item)) && Number.isInteger(Number(item)) && Number(item) >= 0,
+                )
+            ) {
+                // Check if at least one of the scores is non-zero
+                if (responseBody.results.some((item: string) => Number(item) !== 0)) {
+                    status = AttestationResponseStatus.VALID;
+                }
             }
 
             if (!responseBody.timestamp) {
@@ -172,11 +182,10 @@ export class WEBMatchResultVerifierService {
  * @returns  Body of the response
  */
 async function prepareResponseBody(requestBody: MatchResult_RequestBody): Promise<MatchResult_ResponseBody> {
-    const results = await getEventResults(requestBody.teams, requestBody.gender, requestBody.sport, requestBody.date);
-
+    const results = await getEventResults(requestBody.teams, requestBody.sport, Number(requestBody.date));
     const responseBody = {
         timestamp: results.ts || "",
-        result: results.winner || "0",
+        results: results.results || [],
     } as MatchResult_ResponseBody;
 
     return responseBody;

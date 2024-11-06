@@ -1,4 +1,4 @@
-
+#!/bin/sh
 # DTO
 rm -rf src/dto/TypeTemplate.dto.ts
 cp ../state-connector-protocol/generated/types/nest-js-dto/TypeTemplate.dto.ts src/dto/

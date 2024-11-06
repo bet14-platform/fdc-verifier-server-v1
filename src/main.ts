@@ -4,8 +4,10 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
+import logger from "./logger";
 
 async function bootstrap() {
+    logger.info("Starting server");
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     app.use(helmet());
@@ -23,7 +25,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(`${basePath}/api`, app, document);
 
-    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+    const PORT = process.env.PORT ? process.env.PORT : 3000;
     console.log(`Your template is available on PORT: ${PORT}`);
     await app.listen(PORT);
 }

@@ -18,6 +18,34 @@ import {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// CUSTOM VALIDATORS ////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Validator constraint for an array of numbers or 0x-prefixed hexadecimal strings.
+ */
+@ValidatorConstraint({ name: "array-unsigned-int", async: false })
+class IsArrayOfUnsignedIntLike implements ValidatorConstraintInterface {
+    /**
+     * Validates if the given value is an array of strings of decimal unsigned numbers or 0x-prefixed hexadecimal strings.
+     * @param value
+     * @param args
+     * @returns
+     */
+    validate(value: any, _args: ValidationArguments): boolean {
+        if (!Array.isArray(value)) {
+            return false;
+        }
+
+        return value.every((item) => typeof item === "string" && (/^0x[0-9a-fA-F]+$/i.test(item) || /^[0-9]+$/i.test(item)));
+    }
+
+    /**
+     * Returns the default error message template.
+     * @param args
+     * @returns
+     */
+    defaultMessage(_args: ValidationArguments): string {
+        return "($property) must be an array of decimal numbers in string or 0x-prefixed hexadecimal strings";
+    }
+}
 
 /**
  * Validator constraint if the given value is a number or 0x-prefixed hexadecimal string.
@@ -194,9 +222,9 @@ export class MatchResult_ResponseBody {
     /**
      * Possible return values are 0 = no data, 1 = team 1 won, 2 = team 2 won, 3 = draw
      */
-    @Validate(IsUnsignedIntLike)
-    @ApiProperty({ description: `Possible return values are 0 = no data, 1 = team 1 won, 2 = team 2 won, 3 = draw`, example: "1" })
-    result: string;
+    @Validate(IsArrayOfUnsignedIntLike)
+    @ApiProperty({ description: `Possible return is an array of string numbers (scores) for each team at relative index`, example: "[2,3]" })
+    results: string[];
 }
 export class MatchResult_RequestBody {
     constructor(params: Required<MatchResult_RequestBody>) {
@@ -211,22 +239,14 @@ export class MatchResult_RequestBody {
     date: string;
 
     /**
-     * id of a sport from 0 - Basketball, 1 - Basketball3x3, 2 - Badminton, 3 - BeachVolley, 4 - FieldHockey, 5 - Football, 6 - Handball, 7 - TableTennis, 8 - Tennis, 9 - Volleyball, 10 - WaterPolo
+     * id of a sport from TODO: Provide comments on available sport indexes
      */
     @Validate(IsUnsignedIntLike)
     @ApiProperty({
-        description: `id of a sport from 0 - Basketball, 1 - Basketball3x3, 2 - Badminton, 3 - BeachVolley, 4 - FieldHockey, 5 - Football, 6 - Handball, 7 - TableTennis, 8 - Tennis, 9 - Volleyball, 10 - WaterPolo`,
+        description: `id of a sport from 0 - Soccer (EPL)`,
         example: "0",
     })
     sport: string;
-
-    /**
-     * 0 - male, 1 - female
-     */
-    @Validate(IsUnsignedIntLike)
-    @ApiProperty({ description: `0 - male, 1 - female`, example: "0" })
-    gender: string;
-
     /**
      * teams playing the game, divided with comma (example: England,Slovenia)
      */

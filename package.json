@@ -27,14 +27,21 @@
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.1.11",
+    "@sentry/node": "^8.28.0",
+    "@types/traverse": "^0.6.37",
+    "@types/winston": "^2.4.4",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "ethers": "^6.7.1",
     "helmet": "^7.0.0",
+    "klona": "^2.0.6",
     "passport": "^0.6.0",
     "passport-headerapikey": "^1.2.2",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "traverse": "^0.6.9",
+    "winston": "^3.14.2",
+    "winston-transport-sentry-node": "^3.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

@@ -8,3 +8,5 @@ export interface ExampleData<RNM, REQ, RES> {
     encodedRequestZeroMic: string;
     encodedRequest: string;
 }
+
+export const envBool = (variable: any, _default: boolean = false) => ["1", "t", "true", "yes"].includes(String(variable || _default).toLowerCase());

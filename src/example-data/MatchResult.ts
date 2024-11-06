@@ -35,13 +35,15 @@ function randomBodies(fullRandom = false) {
     const requestBody = {
         date: randSol("uint256", "MatchResult" + (fullRandom ? Math.random().toString() : "")),
         sport: randSol("uint32", "MatchResult" + (fullRandom ? Math.random().toString() : "")),
-        gender: randSol("uint8", "MatchResult" + (fullRandom ? Math.random().toString() : "")),
         teams: randSol("string", "MatchResult" + (fullRandom ? Math.random().toString() : "")),
     } as MatchResult_RequestBody;
 
+    const score0 = randSol("uint32", "MatchResult" + (fullRandom ? Math.random().toString() : ""));
+    const score1 = randSol("uint32", "MatchResult" + (fullRandom ? Math.random().toString() : ""));
+
     const responseBody = {
         timestamp: randSol("uint256", "MatchResult" + (fullRandom ? Math.random().toString() : "")),
-        result: randSol("uint8", "MatchResult" + (fullRandom ? Math.random().toString() : "")),
+        results: [score0, score1],
     } as MatchResult_ResponseBody;
     return { requestBody, responseBody };
 }
@@ -68,5 +70,3 @@ export function randomExample(votingRound: number = 1234, sourceId?: string, ful
 export function randomMatchResultExample(votingRound: number = 1234, sourceId?: string, fullRandom = false) {
     return randomExample(votingRound, sourceId, fullRandom);
 }
-
-
